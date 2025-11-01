@@ -1,5 +1,6 @@
 // js/auth.js
 
+// GÜNCELLENDİ: 'googleProvider' firebase.js'den import edildi
 import { auth, googleProvider } from './firebase.js';
 
 /**
@@ -17,14 +18,12 @@ export const signUp = (email, password) => {
 };
 
 /**
- * Google ile Giriş Fonksiyonu
+ * YENİ EKLENDİ: Google ile Giriş Fonksiyonu
  */
 export const signInWithGoogle = () => {
-    // signInWithPopup, sunucu (http/https) gerektirir.
-    // Git'ten dağıtıldığında (Hosting) sorunsuz çalışacaktır.
+    // Popup ile girişi tetikle
     return auth.signInWithPopup(googleProvider);
 };
-
 
 /**
  * Oturumu kapatma (Sign-out)
@@ -40,3 +39,4 @@ export const signOut = () => {
 export const onAuthStateChanged = (callback) => {
     return auth.onAuthStateChanged(callback);
 };
+
