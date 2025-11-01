@@ -1,8 +1,8 @@
 // js/main.js
 
-import { onAuthStateChanged, signIn, signOut, signUp, signInWithGoogle } from './auth.js';
+import { onAuthStateChanged, signIn, signOut, signUp } from './auth.js';
 import * as ui from './ui.js';
-import * as db from './firestore.js';
+import * as db from './firestore.js'; // db (firestore.js) fonksiyonlarını içe aktar
 
 // --- Global Durum (State) ---
 let currentUser = null;
@@ -53,37 +53,58 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
 });
 
 /**
- * Kayıt Formu
+ * GÜNCELLENDİ: Kayıt Formu
+ * Artık 'Ad Soyad' alıyor ve Firestore'a profil oluşturuyor
  */
 document.getElementById('register-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const name = document.getElementById('register-name').value; // YENİ
     const email = document.getElementById('register-email').value;
     const password = document.getElementById('register-password').value;
     
+    if (!name) {
+        ui.showToast('Ad Soyad alanı zorunludur.', 'error');
+        return;
+    }
+
     try {
-        await signUp(email, password);
+        // 1. Firebase Auth üzerinde kullanıcı oluştur
+        const userCredential = await signUp(email, password);
+        const user = userCredential.user;
+
+        // 2. Firestore üzerinde 'users' koleksiyonuna profil oluştur
+        await db.createUserProfile(user.uid, name, email); 
+        
+        // Kayıt başarılı olduğunda onAuthStateChanged tetiklenecek
+        // ve kullanıcıyı otomatik olarak app-screen'e yönlendirecek.
         ui.showToast('Kayıt başarılı! Hoş geldiniz.', 'success');
+        
     } catch (error) {
         ui.showToast(`Kayıt hatası: ${error.message}`, 'error');
     }
 });
 
-/**
- * Google Giriş Butonu Olay Dinleyicisi
- */
+
 document.getElementById('google-signin-btn').addEventListener('click', async () => {
     try {
-        await signInWithGoogle();
+        const userCredential = await signInWithGoogle();
+        const user = userCredential.user;
+        
+        // Google ile ilk kez mi giriş yapıyor?
+        // (isNewUser) veya Firestore'da profilini kontrol et
+        const isNewUser = userCredential.additionalUserInfo.isNewUser;
+
+        if (isNewUser) {
+            // Google ile yeni kayıt olduysa, profilini Firestore'a kaydet
+            await db.createUserProfile(user.uid, user.displayName, user.email);
+        }
+
         ui.showToast('Google ile giriş başarılı!', 'success');
     } catch (error) {
         ui.showToast(`Google giriş hatası: ${error.message}`, 'error');
     }
 });
 
-
-/**
- * Form Değiştirme Linkleri
- */
 document.getElementById('show-register-link').addEventListener('click', (e) => {
     e.preventDefault();
     ui.showRegisterForm();
@@ -157,6 +178,28 @@ document.getElementById('new-plan-btn').addEventListener('click', () => {
     ui.showModal(formHtml);
 });
 
+/**
+ * YENİ EKLENDİ: "Planı Paylaş" Butonu
+ */
+document.getElementById('share-plan-btn').addEventListener('click', () => {
+    if (!currentPlanId) return;
+    
+    // Paylaşma formu için modal aç
+    const formHtml = `
+        <h3>Planı Paylaş</h3>
+        <form id="share-plan-form">
+            <input type="email" id="share-email" placeholder="Kullanıcı e-postası" required>
+            <select id="share-role">
+                <option value="editor">Düzenleyici (Editor)</option>
+                <option value="viewer">İzleyici (Viewer)</option>
+                <option value="approver">Onaylayıcı (Approver)</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Paylaş</button>
+        </form>
+    `;
+    ui.showModal(formHtml);
+});
+
 
 /**
  * Modal içindeki formlar (Dinamik olay dinleyicisi)
@@ -198,6 +241,39 @@ document.getElementById('modal-backdrop').addEventListener('submit', async (e) =
             ui.showToast(`Hata: ${error.message}`, 'error');
         }
     }
+
+    // YENİ EKLENDİ: Plan Paylaşma Formu
+    if (e.target.id === 'share-plan-form') {
+        const email = document.getElementById('share-email').value;
+        const role = document.getElementById('share-role').value;
+
+        try {
+            // 1. E-postaya sahip kullanıcıyı Firestore'da bul
+            const userToShare = await db.findUserByEmail(email);
+
+            if (!userToShare) {
+                ui.showToast('Bu e-postaya sahip bir kullanıcı bulunamadı.', 'error');
+                return;
+            }
+
+            if (userToShare.id === currentUser.uid) {
+                 ui.showToast('Planı kendinizle paylaşamazsınız.', 'warning');
+                return;
+            }
+
+            // 2. Planı bu kullanıcının ID'si ile paylaş
+            await db.sharePlanWithUser(currentPlanId, userToShare.id, role);
+            
+            ui.hideModal();
+            ui.showToast(`Plan ${email} ile (${role} olarak) paylaşıldı!`, 'success');
+
+        } catch (error) {
+            // Bu hatanın sebebi büyük ihtimalle 'İndeks' eksikliğidir.
+            console.error("Paylaşım hatası:", error);
+            ui.showToast(`Hata: ${error.message}`, 'error');
+            // Hata mesajını F12->Konsol'da kontrol edin (İndeks linki orada olacak)
+        }
+    }
 });
 
 /**
@@ -217,3 +293,4 @@ document.getElementById('requests-list').addEventListener('click', async (e) => 
         }
     }
 });
+
