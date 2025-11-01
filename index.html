@@ -39,6 +39,8 @@
         <div id="register-container" class="hidden">
             <h2>Kayıt Ol</h2>
             <form id="register-form">
+                <!-- GÜNCELLENDİ: Ad Soyad alanı eklendi -->
+                <input type="text" id="register-name" placeholder="Ad Soyad" required> 
                 <input type="email" id="register-email" placeholder="E-posta" required>
                 <input type="password" id="register-password" placeholder="Şifre (min. 6 karakter)" required>
                 <button type="submit" class="btn btn-primary">Kayıt Ol</button>
@@ -67,11 +69,18 @@
 
             <!-- Seçili Plan Detayları (Görevler) -->
             <section id="tasks-section" class="hidden">
-                <h3 id="current-plan-name"></h3>
+                <!-- GÜNCELLENDİ: Kontrol butonları bir div içine alındı -->
+                <div id="tasks-section-header">
+                    <h3 id="current-plan-name"></h3>
+                    <div id="tasks-section-controls">
+                        <button id="new-task-request-btn" class="btn">Yeni Görev Talebi</button>
+                        <button id="share-plan-btn" class="btn btn-primary">Planı Paylaş</button>
+                    </div>
+                </div>
+                
                 <div id="task-table-container">
                     <!-- Görev tablosu buraya render edilecek -->
                 </div>
-                 <button id="new-task-request-btn" class="btn">Yeni Görev Talebi</button>
             </section>
 
             <!-- Değişiklik Talepleri Paneli -->
@@ -98,7 +107,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <!-- YENİ EKLENDİ: Eksik Olan Storage Kütüphanesi -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
     
     <!-- Uygulama Modülleri -->
