@@ -1,0 +1,154 @@
+/* Genel */
+body { 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+    background: #f4f7f6; 
+    color: #333;
+    margin: 0;
+}
+.container { 
+    max-width: 1200px; 
+    margin: 20px auto; 
+    padding: 20px; 
+    background: #fff; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.hidden { display: none !important; }
+
+/* Header */
+header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+
+/* Butonlar */
+.btn { 
+    padding: 10px 15px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+    width: 100%; /* Tüm butonlar tam genişlik olsun */
+    box-sizing: border-box; /* padding'in genişliği bozmamasını sağlar */
+    text-align: center;
+}
+.btn-primary { background: #007bff; color: white; }
+.btn-primary:hover { background: #0056b3; }
+
+/* Formlar */
+input[type="email"], input[type="password"], input[type="text"], textarea {
+    width: 100%; 
+    box-sizing: border-box; /* padding'in genişliği etkilememesi için */
+    padding: 10px; 
+    margin-bottom: 10px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px;
+}
+textarea { min-height: 80px; }
+
+/* Form Geçiş Linkleri */
+.toggle-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.9em;
+}
+.toggle-link a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+}
+.toggle-link a:hover {
+    text-decoration: underline;
+}
+
+/* 'veya' ayırıcı stili */
+.separator {
+    text-align: center;
+    margin: 15px 0;
+    color: #888;
+    font-weight: 600;
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
+
+/* Google Buton Stili */
+.btn-google {
+    background-color: #4285F4;
+    color: white;
+    margin-top: 0;
+}
+.btn-google:hover {
+    background-color: #357ae8;
+}
+
+/* Plan Listesi */
+.plan-item {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.plan-item:hover { background-color: #f9f9f9; }
+
+/* Görev Tablosu */
+#task-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+#task-table-container th, #task-table-container td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+#task-table-container th { background-color: #f2f2f2; }
+
+/* Talep Listesi */
+#requests-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Modal (ui.js kontrol edecek) */
+.modal-backdrop { 
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.modal { 
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    min-width: 400px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Toast Bildirimleri (ui.js kontrol edecek) */
+#toast-container { 
+    position: fixed; 
+    top: 20px; 
+    right: 20px; 
+    z-index: 1001; 
+}
+.toast {
+    padding: 15px; 
+    margin-bottom: 10px; 
+    border-radius: 5px; 
+    color: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    opacity: 0; 
+    transform: translateY(-20px); 
+    transition: all 0.3s ease;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast-success { background: #28a745; }
+.toast-error { background: #dc3545; }
+.toast-warning { background: #ffc107; color: #333; }
