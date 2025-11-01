@@ -1,6 +1,7 @@
 // js/main.js
 
-import { onAuthStateChanged, signIn, signOut, signUp } from './auth.js';
+// GÜNCELLENDİ: 'signInWithGoogle' import edildi
+import { onAuthStateChanged, signIn, signOut, signUp, signInWithGoogle } from './auth.js';
 import * as ui from './ui.js';
 import * as db from './firestore.js'; // db (firestore.js) fonksiyonlarını içe aktar
 
@@ -53,7 +54,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
 });
 
 /**
- * GÜNCELLENDİ: Kayıt Formu
+ * Kayıt Formu
  * Artık 'Ad Soyad' alıyor ve Firestore'a profil oluşturuyor
  */
 document.getElementById('register-form').addEventListener('submit', async (e) => {
@@ -75,8 +76,6 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
         // 2. Firestore üzerinde 'users' koleksiyonuna profil oluştur
         await db.createUserProfile(user.uid, name, email); 
         
-        // Kayıt başarılı olduğunda onAuthStateChanged tetiklenecek
-        // ve kullanıcıyı otomatik olarak app-screen'e yönlendirecek.
         ui.showToast('Kayıt başarılı! Hoş geldiniz.', 'success');
         
     } catch (error) {
@@ -84,14 +83,16 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
     }
 });
 
-
+/**
+ * Google Giriş Butonu
+ */
 document.getElementById('google-signin-btn').addEventListener('click', async () => {
     try {
+        // Artık 'signInWithGoogle' tanımlı ve import edildi
         const userCredential = await signInWithGoogle();
         const user = userCredential.user;
         
         // Google ile ilk kez mi giriş yapıyor?
-        // (isNewUser) veya Firestore'da profilini kontrol et
         const isNewUser = userCredential.additionalUserInfo.isNewUser;
 
         if (isNewUser) {
@@ -179,7 +180,7 @@ document.getElementById('new-plan-btn').addEventListener('click', () => {
 });
 
 /**
- * YENİ EKLENDİ: "Planı Paylaş" Butonu
+ * "Planı Paylaş" Butonu
  */
 document.getElementById('share-plan-btn').addEventListener('click', () => {
     if (!currentPlanId) return;
@@ -189,7 +190,7 @@ document.getElementById('share-plan-btn').addEventListener('click', () => {
         <h3>Planı Paylaş</h3>
         <form id="share-plan-form">
             <input type="email" id="share-email" placeholder="Kullanıcı e-postası" required>
-            <select id="share-role">
+            <select id="share-role" class="form-select">
                 <option value="editor">Düzenleyici (Editor)</option>
                 <option value="viewer">İzleyici (Viewer)</option>
                 <option value="approver">Onaylayıcı (Approver)</option>
@@ -242,7 +243,7 @@ document.getElementById('modal-backdrop').addEventListener('submit', async (e) =
         }
     }
 
-    // YENİ EKLENDİ: Plan Paylaşma Formu
+    // Plan Paylaşma Formu
     if (e.target.id === 'share-plan-form') {
         const email = document.getElementById('share-email').value;
         const role = document.getElementById('share-role').value;
@@ -268,10 +269,8 @@ document.getElementById('modal-backdrop').addEventListener('submit', async (e) =
             ui.showToast(`Plan ${email} ile (${role} olarak) paylaşıldı!`, 'success');
 
         } catch (error) {
-            // Bu hatanın sebebi büyük ihtimalle 'İndeks' eksikliğidir.
             console.error("Paylaşım hatası:", error);
             ui.showToast(`Hata: ${error.message}`, 'error');
-            // Hata mesajını F12->Konsol'da kontrol edin (İndeks linki orada olacak)
         }
     }
 });
