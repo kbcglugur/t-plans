@@ -90,6 +90,24 @@ textarea { min-height: 80px; }
 }
 .plan-item:hover { background-color: #f9f9f9; }
 
+/* GÜNCELLENDİ: Görevler Bölümü Başlığı */
+#tasks-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+#tasks-section-controls {
+    display: flex;
+    gap: 10px; /* Butonlar arasına boşluk */
+}
+/* Kontrol butonlarının genişliğini auto yap (form butonları gibi tam genişlik olmasın) */
+#tasks-section-controls .btn {
+    width: auto;
+}
+
+
 /* Görev Tablosu */
 #task-table-container table {
     width: 100%;
@@ -152,3 +170,4 @@ textarea { min-height: 80px; }
 .toast-success { background: #28a745; }
 .toast-error { background: #dc3545; }
 .toast-warning { background: #ffc107; color: #333; }
+
