@@ -1,0 +1,33 @@
+# .github/workflows/firebase-deploy.yml
+
+name: Firebase Hosting'e Dağıt
+
+# Sadece 'main' branch'ine push yapıldığında çalışır
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Kodu (depoyu) sunucuya çeker
+      - uses: actions/checkout@v4
+
+      # 2. Node.js'i kurar (Firebase araçları için gerekli)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 3. Firebase CLI araçlarını kurar
+      - run: npm install -g firebase-tools
+
+      # 4. Firebase'e dağıtır
+      #    BURASI ÇOK ÖNEMLİ: 'FIREBASE_TOKEN' adında bir sır (secret)
+      #    oluşturmanız gerekecek (Aşağıda açıklayacağım)
+      - name: Firebase'e Dağıt
+        run: |
+          firebase deploy --only hosting --token "${{ secrets.FIREBASE_TOKEN }}"
+        env:
+          FIREBASE_PROJECT_ID: t-plans # Proje ID'nizi buraya yazabilirsiniz
